@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+    <head>
+        <title>livery customizer demo</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js" integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg==" crossorigin="anonymous"></script>
+        <script src='src/GLTFLoader.js'></script>
+        <script src='src/TrackballControls.js'></script>
+    </head>
+    
+    <style>
+        body{
+            font-family: monospace;
+        }
+        
+        #header{
+            text-align: center;
+            position: relative;
+            display: block;
+        }
+        
+        #colorWheelContainer{
+            border: 1px solid #000;
+        }
+        
+        .flex{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        #display{
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        #editArea{
+            text-align: center;
+            margin: 0 auto;
+        }
+        
+        #liveryDisplay{
+            position: relative;
+            margin: 0px auto;
+            overflow: hidden; /* this makes sure that the visible canvas content is only within the bounds of #canvasArea */
+        }
+        
+        #liveryCanvas{
+            border: 1px solid #000;
+        }
+        
+        #liveryCanvas:hover{
+            cursor: crosshair;
+        }
+        
+        #colorPickedfromTexture{
+            width: 30%;
+        }
+        
+        #brushSize{
+            vertical-align: bottom;
+        }
+        
+        button{
+            margin: 3px;
+        }
+        
+        li{
+            display: inline-block;
+        }
+        
+        canvas{
+            touch-action: none;
+        }
+        
+    </style>
+    
+    <body>
+        <div id='header'>
+            <h1> livery customizer </h1>
+            <p> <strong>instructions:</strong> Use a mouse to draw on the canvas below containing the texture of the model. Then click the 'update model' button. You can also rotate the model by clicking on the canvas of the model and moving your mouse (it has trackball controls). </p>
+            <p> You can also paste in an image via ctrl+v and drag it into place, as well as resize it by moving the mouse around after pressing the 's' key or rotate it with the mouse wheel after pressing the 'r' key. To apply a pasted image to the underlying canvas, click outside the texture canvas. To cancel, press esc. </p>
+            <p> To use the masking layer, toggle it first. Then, without changing the brush color (which should automatically be white) and using the mouse, paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
+        
+            <ul id='toolbar'>                
+                <li>
+                    <label for='selectModel'> model: </label>
+                    <select id='selectModel'>
+                        <option value="f-16" selected>jet</option>
+                        <option value="porsche">car</option>
+                    </select>
+                </li>
+                
+                <li><button id='pickColorFromTexture'>find color</button></li>
+                <li><button id='toggleWireframe'>wireframe</button></li>
+                <li><button id='lockRotation'>lock rotation</button></li>
+                <li><button id='drawOnModel' title='draw on the model with the brush'>draw on model</button></li>
+                <li><button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button></li>
+                <li><button id='importTexture'>import texture</button></li>
+                <li><button id='exportTexture'>export texture</button></li>
+                
+                <li><button id='toggleMaskingLayer'>toggle masking layer</button></li>
+                <li><button id='applyMaskingLayer'>apply masking layer</button></li>
+                <li><button id='clearMaskingLayer'>clear masking layer</button></li>
+                <li><button id='updateModel'>update model</button></li>
+            </ul>
+        
+        </div>
+        
+        <div class='flex'>
+            <div id='display'>
+                <div id="colorWheelContainer">
+                    <div>
+                        <span>brush size: </span>
+                        <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
+                        <label for='brushSize' id="currBrushSize">3</label>
+                        
+                        <span>&nbsp;&nbsp;&nbsp;</span>
+                        
+                        <label for='colorInput'>pen color: </label>
+                        <input id='colorInput' name="colorInput" type="text" value="rgba(0,0,0,255)"/>
+                        
+                        <span>&nbsp;&nbsp;&nbsp;</span>
+                        
+                        <label for='imageFilters'> filter: </label>
+                        <select id='imageFilters'>
+                            <option value=""></option>
+                            <option value="invert">invert</option>
+                            <option value="mosaic">mosaic</option>
+                        </select>
+                        
+                        <br />
+                        
+                        <p id='colorPickedfromTexture'>found color</p>
+                    </div>
+                </div>
+            </div>
+            <div id='editArea'>
+                <div id='liveryDisplay'>
+                    <canvas id='liveryCanvas'>
+                    </canvas>
+                    <canvas id='maskingLayer'>
+                    </canvas>
+                    <canvas id='meshFaceLayer'>
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </body>
+    
+    <script src='src/pasteImageUtils.js'></script>
+    <script src='src/colorPicker.js'></script>
+    <script src='src/maskingCanvasUtils.js'></script>
+    <script src='src/filters.js'></script>
+    <script src='src/index.js'></script>
+</html>
