@@ -57,6 +57,7 @@ function getModel(modelFilePath, name){
                     
                     const carBody = gltf.scene.children.filter((obj) => obj.name === "porsche")[0];
                     currModelTextureMesh = carBody;
+                    currModel = carBody;
                     
                     const texture = carBody.material.map.image;
                     const canvas = document.getElementById('liveryCanvas');
