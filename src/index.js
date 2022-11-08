@@ -57,7 +57,6 @@ function getModel(modelFilePath, name){
                     
                     const carBody = gltf.scene.children.filter((obj) => obj.name === "porsche")[0];
                     currModelTextureMesh = carBody;
-                    currModel = carBody;
                     
                     const texture = carBody.material.map.image;
                     const canvas = document.getElementById('liveryCanvas');
@@ -363,8 +362,7 @@ document.getElementById('brushSize').addEventListener('change', (evt) => {
 });
 
 document.getElementById('toggleWireframe').addEventListener('click', (evt) => {
-    currModel.material.wireframe = !currModel.material.wireframe;
-    console.log(currModel.geometry);
+    currModelTextureMesh.material.wireframe = !currModelTextureMesh.material.wireframe;
 });
 
 // for selecting a mesh face and finding the corresponding texture section for that face
@@ -401,7 +399,7 @@ function setupMeshFaceLayer(){
 function getFaceMesh(e){
     const mouseCoords = getCoordsOnMouseClick(e);
     raycaster.setFromCamera(mouseCoords, camera);
-    const intersects = raycaster.intersectObject(currModel);
+    const intersects = raycaster.intersectObject(currModelTextureMesh);
 
     // https://stackoverflow.com/questions/29274674/three-js-ray-picking-face-segments-of-plane-mesh-v69
     // https://stackoverflow.com/questions/50064556/how-to-get-intersected-face-when-raycasting-against-buffer-geometry
@@ -509,7 +507,7 @@ function addClickModelDraw(ptrEvt, dragging){
     const mouseCoords = getCoordsOnMouseClick(ptrEvt);
     raycaster.setFromCamera(mouseCoords, camera);
     
-    const intersects = raycaster.intersectObject(currModel);
+    const intersects = raycaster.intersectObject(currModelTextureMesh);
     if(intersects.length > 0){
         const intersected = intersects[0];
         
