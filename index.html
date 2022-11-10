@@ -20,6 +20,8 @@
         
         #colorWheelContainer{
             border: 1px solid #000;
+            margin-top: 1%;
+            padding: 3px;
         }
         
         .flex{
@@ -28,9 +30,12 @@
         }
         
         #display{
+            margin: 0 auto;
+        }
+
+        #modelCanvas{
             width: 800px;
             height: 600px;
-            margin: 0 auto;
         }
         
         #editArea{
@@ -108,6 +113,7 @@
         
         <div class='flex'>
             <div id='display'>
+                <canvas id="modelCanvas"></canvas>
                 <div id="colorWheelContainer">
                     <div>
                         <span>brush size: </span>

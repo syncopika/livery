@@ -4,15 +4,14 @@ let currModelTextureMesh = null; // use this variable to keep track of the mesh 
 const loader = new THREE.GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
 
-const container = document.getElementById("display");
-const renderer = new THREE.WebGLRenderer({antialias: true});
+const container = document.getElementById("modelCanvas");
+const renderer = new THREE.WebGLRenderer({antialias: true, canvas: container});
 const fov = 60;
 const camera = new THREE.PerspectiveCamera(fov, container.clientWidth / container.clientHeight, 0.01, 1000);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
 
 renderer.setSize(container.clientWidth, container.clientHeight);
-container.insertBefore(renderer.domElement, container.firstChild); //container.appendChild(renderer.domElement);
 renderer.domElement.style.border = '1px solid #000';
 
 camera.position.set(0, 10, 18);
@@ -91,9 +90,9 @@ function getModel(modelFilePath, name){
                             meshFace.width = canvas.width;
                             setupMeshFaceLayer();
                             
-                            let material = child.material;
-                            let geometry = child.geometry;
-                            let obj = new THREE.Mesh(geometry, material);
+                            const material = child.material;
+                            const geometry = child.geometry;
+                            const obj = new THREE.Mesh(geometry, material);
                             obj.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/4);
                             obj.name = name;
                             
@@ -210,13 +209,12 @@ document.getElementById("exportTexture").addEventListener('click', () => {
     exportTexture();
 });
 
-
 function updateModel(){
     // get image from canvas
-    const imageUrl = document.getElementById('liveryCanvas').toDataURL();
+    //const imageUrl = document.getElementById('liveryCanvas').toDataURL();
     
     // create new texture from it
-    const newTexture = textureLoader.load(imageUrl);
+    const newTexture = new THREE.CanvasTexture(document.getElementById('liveryCanvas')); //textureLoader.load(imageUrl);
     
     // update model with new texture
     const oldTexture = currModelTextureMesh.material.map;
@@ -545,8 +543,9 @@ function strokeModelDraw(){
         ctx.stroke();
     }
     
-    // TODO: updating this way is not great :/ (but it works!)
-    updateModel();
+    const newTexture = new THREE.CanvasTexture(document.getElementById('liveryCanvas'));
+    newTexture.flipY = false;
+    currModelTextureMesh.material.map = newTexture;
 }
 
 let drawOnModel = false;
