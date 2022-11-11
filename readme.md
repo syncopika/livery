@@ -6,6 +6,5 @@ create custom livery for 3d models! :D
      
 todo:    
 - allow import/export of models
-- improve drawing directly on model
 - add shapes for drawing
 - need a straightedge for masking
