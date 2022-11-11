@@ -122,6 +122,7 @@ function applyMaskingLayer(){
     for(let i = 0; i < height; i++){
         for(let j = 0; j < width; j++){
             // we just care about checking the alpha value
+            // TODO: how about any "unused" area that has no pasted image pixels? should we ignore that too?
             const maskAlpha = maskImgData.data[i*width*4 + j*4 + 3];
             if(maskAlpha === 153){
                 // alpha is 0.6

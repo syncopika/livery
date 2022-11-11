@@ -190,14 +190,7 @@ function addPasteCanvasEventListeners(pasteCanvas, initialCanvasWidth, initialCa
             const dWidth = (pasteCanvas.width/initialCanvasWidth)*originalPasteImage.width;
             const dx = -dWidth/2;
             const dy = -dHeight/2;
-            
-            console.log("initial canvas height: " + initialCanvasHeight + ", initial canvas width: " + initialCanvasWidth);
-            console.log("original paste image height: " + originalPasteImage.height + ", " + "new paste image height: " + dHeight);
-            console.log("original paste image width: " + originalPasteImage.width + ", " + "new paste image width: " + dWidth);
-            console.log("height scale factor: " + (pasteCanvas.height/initialCanvasHeight));
-            console.log("width scale factor: " + (pasteCanvas.width/initialCanvasWidth));
-            console.log("--------------------------");
-            
+
             redrawImage(currPasteCanvasRotation, sHeight, sWidth, dx, dy, dHeight, dWidth, pasteCanvas, ctx);
         }
     });
