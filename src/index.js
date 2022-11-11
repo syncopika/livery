@@ -1,5 +1,6 @@
 let currModel = null;
 let currModelTextureMesh = null; // use this variable to keep track of the mesh whose texture is being edited
+let currTexture = null;
 
 const loader = new THREE.GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
@@ -14,7 +15,7 @@ scene.background = new THREE.Color(0xffffff);
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.domElement.style.border = '1px solid #000';
 
-camera.position.set(0, 10, 18);
+camera.position.set(0, 10, 21);
 camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
 scene.add(camera);
 
@@ -58,13 +59,11 @@ function getModel(modelFilePath, name){
                     currModelTextureMesh = carBody;
                     
                     const texture = carBody.material.map.image;
+                    currTexture = texture;
+
                     const canvas = document.getElementById('liveryCanvas');
                     canvas.width = texture.width;
                     canvas.height = texture.height;
-                    
-                    // make sure to explicitly set size of the canvas container
-                    canvas.parentNode.style.width = texture.width + "px";
-                    canvas.parentNode.style.height = texture.height + "px";
                     
                     canvas.getContext('2d').drawImage(texture, 0, 0);
                 }else{
@@ -73,11 +72,11 @@ function getModel(modelFilePath, name){
                             // get the embedded texture and display in canvas
                             //console.log(gltf);
                             const texture = child.material.map.image;
+                            currTexture = texture;
+
                             const canvas = document.getElementById('liveryCanvas');
                             canvas.width = texture.width;
                             canvas.height = texture.height;
-                            canvas.parentNode.style.width = texture.width + "px";
-                            canvas.parentNode.style.height = texture.height + "px";
                             canvas.getContext('2d').drawImage(texture, 0, 0);
                             
                             const mask = document.getElementById("maskingLayer");
@@ -142,6 +141,13 @@ document.getElementById('selectModel').addEventListener('change', (evt) => {
     getModel(`models/${evt.target.value}.gltf`, evt.target.value);
 });
 
+function resetTexture(){
+    const canvas = document.getElementById('liveryCanvas');
+    canvas.getContext('2d').drawImage(currTexture, 0, 0);
+}
+document.getElementById('resetTexture').addEventListener('click', () => {
+    resetTexture();
+});
 
 function importTexture(){
     fileHandler();
@@ -170,6 +176,8 @@ function importTexture(){
             const width = canvas.width;
             context.drawImage(img, 0, 0, width, height);
             
+            currTexture = img;
+
             const mask = document.getElementById("maskingLayer");
             mask.height = canvas.height;
             mask.width = canvas.width;
@@ -445,7 +453,6 @@ function getFaceMesh(e){
         meshFaceLayerCtx.stroke();
     }
 }
-
 document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
     selectingMeshFace = !selectingMeshFace;
         

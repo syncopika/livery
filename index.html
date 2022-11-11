@@ -16,6 +16,7 @@
             text-align: center;
             position: relative;
             display: block;
+            padding: 0px 5px 5px 5px;
         }
         
         #colorWheelContainer{
@@ -23,10 +24,14 @@
             margin-top: 1%;
             padding: 3px;
         }
-        
+
+        #colorWheel{
+            display: block;
+            margin: 0 auto;
+        }
+
         .flex{
             display: flex;
-            flex-wrap: wrap;
         }
         
         #display{
@@ -34,8 +39,8 @@
         }
 
         #modelCanvas{
-            width: 800px;
-            height: 600px;
+            width: 100%;
+            height: 100%;
         }
         
         #editArea{
@@ -46,7 +51,9 @@
         #liveryDisplay{
             position: relative;
             margin: 0px auto;
-            overflow: hidden; /* this makes sure that the visible canvas content is only within the bounds of #canvasArea */
+            padding: 1px;
+            width: 100%;
+            height: 100%;
         }
         
         #liveryCanvas{
@@ -84,7 +91,7 @@
             <h1> livery customizer </h1>
             <p> <strong>instructions:</strong> Use a mouse to draw on the canvas below containing the texture of the model. Then click the 'update model' button. You can also rotate the model by clicking on the canvas of the model and moving your mouse (it has trackball controls). </p>
             <p> You can also paste in an image via ctrl+v and drag it into place, as well as resize it by moving the mouse around after pressing the 's' key or rotate it with the mouse wheel after pressing the 'r' key. To apply a pasted image to the underlying canvas, click outside the texture canvas. To cancel, press esc. </p>
-            <p> To use the masking layer, toggle it first. Then, without changing the brush color (which should automatically be white) and using the mouse, paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
+            <p> To use the masking layer, toggle it first. Then paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
         
             <ul id='toolbar'>                
                 <li>
@@ -95,11 +102,12 @@
                     </select>
                 </li>
                 
-                <li><button id='pickColorFromTexture'>find color</button></li>
+                <li><button id='pickColorFromTexture' title="find a pixel's color from the texture canvas">find texture color</button></li>
                 <li><button id='toggleWireframe'>wireframe</button></li>
                 <li><button id='lockRotation'>lock rotation</button></li>
                 <li><button id='drawOnModel' title='draw on the model with the brush'>draw on model</button></li>
                 <li><button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button></li>
+                <li><button id='resetTexture'>reset texture</button></li>
                 <li><button id='importTexture'>import texture</button></li>
                 <li><button id='exportTexture'>export texture</button></li>
                 
@@ -108,7 +116,7 @@
                 <li><button id='clearMaskingLayer'>clear masking layer</button></li>
                 <li><button id='updateModel'>update model</button></li>
             </ul>
-        
+
         </div>
         
         <div class='flex'>
@@ -132,11 +140,12 @@
                             <option value=""></option>
                             <option value="invert">invert</option>
                             <option value="mosaic">mosaic</option>
+                            <option value="saturate">saturate</option>
                         </select>
                         
                         <br />
                         
-                        <p id='colorPickedfromTexture'>found color</p>
+                        <p id='colorPickedfromTexture'>found color goes here</p>
                     </div>
                 </div>
             </div>
