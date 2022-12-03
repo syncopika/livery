@@ -1,4 +1,5 @@
 let currModel = null;
+let currMeshes = {};
 let currModelTextureMesh = null; // use this variable to keep track of the mesh whose texture is being edited
 let currTexture = null;
 
@@ -43,67 +44,93 @@ const raycaster = new THREE.Raycaster();
 getModel('models/f-16.gltf', 'f16');
 update();
 
+
+function processGltf(name){
+    return function(gltf){
+        //console.log(gltf);
+        
+        clearLiveryCanvas();
+        
+        currMeshes = {};
+        
+        gltf.scene.traverse((child) => {
+            if(child.type === "Mesh" || child.type === "SkinnedMesh"){
+                currMeshes[child.name] = {mesh: null, texture: null};
+                
+                // get the embedded texture and display in canvas
+                const hasTexture = child.material.map !== null;
+                
+                if(hasTexture){
+                    const texture = child.material.map.image;
+                    currTexture = texture;
+                    currMeshes[child.name].texture = texture;
+                    
+                    const canvas = document.getElementById('liveryCanvas');
+                    canvas.width = texture.width;
+                    canvas.height = texture.height;
+                    canvas.getContext('2d').drawImage(texture, 0, 0);
+                    
+                    const mask = document.getElementById("maskingLayer");
+                    mask.height = canvas.height;
+                    mask.width = canvas.width;
+                    setupMaskingLayer();
+
+                    const meshFace = document.getElementById("meshFaceLayer");
+                    meshFace.height = canvas.height;
+                    meshFace.width = canvas.width;
+                    setupMeshFaceLayer();
+                }else{
+                    currTexture = null;
+                }
+                
+                const material = child.material.clone();
+                const geometry = child.geometry.clone();
+                const obj = new THREE.Mesh(geometry, material);
+                
+                obj.name = child.name;
+                
+                currMeshes[child.name].mesh = obj;
+                
+                currModel = obj;
+                currModelTextureMesh = obj;
+                
+                //if(child.parent) console.log(child.parent);
+                if(child.parent && currMeshes[child.parent.name]){
+                    currMeshes[child.parent.name].mesh.add(obj);
+                }
+                
+                // reminder that rotation/position/scale fields are immutable: https://github.com/mrdoob/three.js/issues/8940
+                obj.rotation.copy(child.rotation);
+                obj.position.copy(child.position);
+                obj.scale.copy(child.scale);
+                
+                processMesh(obj);
+                
+            }else if(child.type === "Object3D" && (child.name.includes("Armature") || child.name.includes("Bone"))){
+                const obj3d = new THREE.Object3D();
+                obj3d.position.copy(child.position);
+                obj3d.rotation.copy(child.rotation);
+                obj3d.scale.copy(child.scale);
+                obj3d.name = child.name;
+                
+                currMeshes[child.name] = {mesh: obj3d, texture: null};
+                
+                if(child.parent && currMeshes[child.parent.name]){
+                    currMeshes[child.parent.name].mesh.add(obj3d);
+                }
+                
+                processMesh(obj3d);
+            }
+        });
+        console.log(currMeshes);
+    }
+}
+
 function getModel(modelFilePath, name){
     return new Promise((resolve, reject) => {
         loader.load(
             modelFilePath,
-            async function(gltf){
-                if(name === "porsche"){
-                    currModel = gltf.scene;
-                    currModel.scale.set(4, 4, 4);
-                    currModel.position.set(0, 0, -5);
-                    currModel.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI*.8);
-                    processMesh(currModel);
-                    
-                    const carBody = gltf.scene.children.filter((obj) => obj.name === "porsche")[0];
-                    currModelTextureMesh = carBody;
-                    
-                    const texture = carBody.material.map.image;
-                    currTexture = texture;
-
-                    const canvas = document.getElementById('liveryCanvas');
-                    canvas.width = texture.width;
-                    canvas.height = texture.height;
-                    
-                    canvas.getContext('2d').drawImage(texture, 0, 0);
-                }else{
-                    gltf.scene.traverse((child) => {
-                        if(child.type === "Mesh"){
-                            // get the embedded texture and display in canvas
-                            //console.log(gltf);
-                            const texture = child.material.map.image;
-                            currTexture = texture;
-
-                            const canvas = document.getElementById('liveryCanvas');
-                            canvas.width = texture.width;
-                            canvas.height = texture.height;
-                            canvas.getContext('2d').drawImage(texture, 0, 0);
-                            
-                            const mask = document.getElementById("maskingLayer");
-                            mask.height = canvas.height;
-                            mask.width = canvas.width;
-                            setupMaskingLayer();
-
-                            const meshFace = document.getElementById("meshFaceLayer");
-                            meshFace.height = canvas.height;
-                            meshFace.width = canvas.width;
-                            setupMeshFaceLayer();
-                            
-                            const material = child.material;
-                            const geometry = child.geometry;
-                            const obj = new THREE.Mesh(geometry, material);
-                            obj.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/4);
-                            obj.name = name;
-                            
-                            obj.position.set(0, 0, 0);
-                            
-                            currModel = obj;
-                            currModelTextureMesh = obj;
-                            processMesh(obj);
-                        }
-                    });
-                }
-            },
+            processGltf(name),
             // called while loading is progressing
             function(xhr){
                 console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
@@ -120,12 +147,14 @@ function getModel(modelFilePath, name){
 function processMesh(mesh){
     // the local axis of the imported mesh is a bit weird and not consistent with the world axis. so, to fix that,
     // put it in a group object and just control the group object! the mesh is also just oriented properly initially when placed in the group.
-    let playerAxesHelper = new THREE.AxesHelper(10);
-    mesh.add(playerAxesHelper);
+    //let playerAxesHelper = new THREE.AxesHelper(10);
+    //mesh.add(playerAxesHelper);
     
-    scene.add(mesh);
+    if(!mesh.parent){
+        scene.add(mesh);
+    }
+    
     update();
-    renderer.render(scene, camera);
 }
 
 function update(){
@@ -134,10 +163,17 @@ function update(){
     renderer.render(scene, camera);
 }
 
+function clearLiveryCanvas(){
+    const canvas = document.getElementById('liveryCanvas');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
 // model selection
 document.getElementById('selectModel').addEventListener('change', (evt) => {
     //console.log(evt.target.value);
-    scene.remove(scene.getObjectByName(currModel.name));
+    for(let meshName in currMeshes){
+        scene.remove(currMeshes[meshName].mesh);
+    }
     getModel(`models/${evt.target.value}.gltf`, evt.target.value);
 });
 
@@ -148,6 +184,37 @@ function resetTexture(){
 document.getElementById('resetTexture').addEventListener('click', () => {
     resetTexture();
 });
+
+function importModel(){
+    // https://stackoverflow.com/questions/61763757/load-gltf-file-into-a-three-js-scene-with-a-html-input
+    // https://stackoverflow.com/questions/64538909/upload-and-preview-gltf-file-3d
+    fileHandler();
+    
+    function fileHandler(){
+        //initiate file choosing after button click
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.addEventListener('change', getFile, false);
+        input.click();
+    }
+    
+    async function getFile(e){
+        const reader = new FileReader();
+        const file = e.target.files[0];
+        
+        for(let meshName in currMeshes){
+            scene.remove(currMeshes[meshName].mesh);
+        }
+        
+        reader.onload = function(evt){
+            const gltfText = evt.target.result;
+            loader.parse(gltfText, '', processGltf(file.name), (err) => console.log(err)); 
+        }
+        
+        reader.readAsText(file);
+    }
+}
+document.getElementById('importModel').addEventListener('click', importModel);
 
 function importTexture(){
     fileHandler();
@@ -219,10 +286,9 @@ document.getElementById("exportTexture").addEventListener('click', () => {
 
 function updateModel(){
     // get image from canvas
-    //const imageUrl = document.getElementById('liveryCanvas').toDataURL();
     
     // create new texture from it
-    const newTexture = new THREE.CanvasTexture(document.getElementById('liveryCanvas')); //textureLoader.load(imageUrl);
+    const newTexture = new THREE.CanvasTexture(document.getElementById('liveryCanvas'));
     
     // update model with new texture
     const oldTexture = currModelTextureMesh.material.map;
@@ -371,9 +437,6 @@ document.getElementById('toggleWireframe').addEventListener('click', (evt) => {
     currModelTextureMesh.material.wireframe = !currModelTextureMesh.material.wireframe;
 });
 
-// for selecting a mesh face and finding the corresponding texture section for that face
-let selectingMeshFace = false;
-
 // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
 function getCoordsOnMouseClick(event){
     const target = event.target;
@@ -405,6 +468,7 @@ function setupMeshFaceLayer(){
 function getFaceMesh(e){
     const mouseCoords = getCoordsOnMouseClick(e);
     raycaster.setFromCamera(mouseCoords, camera);
+    
     const intersects = raycaster.intersectObject(currModelTextureMesh);
 
     // https://stackoverflow.com/questions/29274674/three-js-ray-picking-face-segments-of-plane-mesh-v69
@@ -453,6 +517,9 @@ function getFaceMesh(e){
         meshFaceLayerCtx.stroke();
     }
 }
+
+// for selecting a mesh face and finding the corresponding texture section for that face
+let selectingMeshFace = false;
 document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
     selectingMeshFace = !selectingMeshFace;
         
@@ -465,6 +532,47 @@ document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
 
         evt.target.style.border = '';
         renderer.domElement.removeEventListener('click', getFaceMesh);
+    }
+});
+
+// be able to select a mesh to work on (if there are multiple in the scene)
+// selecting a mesh should update the currModelTextureMesh and currTexture
+let selectingMesh = false;
+function selectMesh(evt){
+    const mouseCoords = getCoordsOnMouseClick(evt);
+    raycaster.setFromCamera(mouseCoords, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if(intersects.length > 0){
+        // let's only care about the first object that's hit
+        const hit = intersects[0].object;
+        if(hit.name in currMeshes){
+            currModelTextureMesh = currMeshes[hit.name].mesh;
+            currTexture = currMeshes[hit.name].texture;
+            
+            // update livery canvas
+            if(currTexture){
+                resetTexture();
+            }else{
+                clearLiveryCanvas();
+            }
+            
+            // indicate which mesh got selected by flashing wireframe
+            currModelTextureMesh.material.wireframe = true;
+            setTimeout(() => {
+                currModelTextureMesh.material.wireframe = false;
+            }, 1500);
+        }
+    }
+}
+document.getElementById('selectMesh').addEventListener('click', (evt) => {
+    selectingMesh = !selectingMesh;
+        
+    if(selectingMesh){
+        evt.target.style.border = '1px solid #0f0';
+        renderer.domElement.addEventListener('click', selectMesh);
+    }else{
+        evt.target.style.border = '';
+        renderer.domElement.removeEventListener('click', selectMesh);
     }
 });
 
@@ -561,7 +669,6 @@ document.getElementById('drawOnModel').addEventListener('click', (evt) => {
     const modelCanvas = renderer.domElement;
     if(!drawOnModel){
         document.getElementById('drawOnModel').style.border = '1px solid #0f0';
-        
         const modelDisplay = renderer.domElement;
         modelDisplay.addEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.addEventListener('pointerup', brushStopModelDraw);
@@ -569,7 +676,6 @@ document.getElementById('drawOnModel').addEventListener('click', (evt) => {
         modelDisplay.addEventListener('pointerleave', brushStopModelDraw);
     }else{
         document.getElementById('drawOnModel').style.border = '1px solid #f00';
-        
         const modelDisplay = renderer.domElement;
         modelDisplay.removeEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.removeEventListener('pointerup', brushStopModelDraw);
