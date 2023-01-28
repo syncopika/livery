@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>livery customizer demo</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js" integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg==" crossorigin="anonymous"></script>
         <script src='src/GLTFLoader.js'></script>
         <script src='src/TrackballControls.js'></script>
@@ -87,12 +88,15 @@
     </style>
     
     <body>
+        <button class="icon">
+            <i class="fa fa-bars"></i>
+        </button>
         <div id='header'>
             <h1> livery customizer </h1>
             <p> <strong>instructions:</strong> Use a mouse to draw on the canvas below containing the texture of the model. Then click the 'update model' button. You can also rotate the model by clicking on the canvas of the model and moving your mouse (it has trackball controls). </p>
             <p> You can also paste in an image via ctrl+v and drag it into place, as well as resize it by moving the mouse around after pressing the 's' key or rotate it with the mouse wheel after pressing the 'r' key. To apply a pasted image to the underlying canvas, click outside the texture canvas. To cancel, press esc. </p>
             <p> To use the masking layer, toggle it first. Then paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
-        
+            
             <ul id='toolbar'>                
                 <li>
                     <label for='selectModel'> model: </label>
@@ -106,11 +110,15 @@
                 
                 <li><button id='selectMesh' title='select mesh to edit texture of'>select mesh</button></li>
                 <li><button id='pickColorFromTexture' title="find a pixel's color from the texture canvas">find texture color</button></li>
-                <li><button id='toggleWireframe'>wireframe</button></li>
-                <li><button id='lockRotation'>lock rotation</button></li>
+                <li id='toggleWireframe'>
+                    <button title="toggle wireframe"><img src="./icons/wireframe.svg" alt="toggle wireframe"></button>
+                </li>
+                <li id='lockRotation'>
+                    <button title="lock trackball rotation"><img src="./icons/lock_rotation.svg" alt="lock trackball rotation"></button>
+                </li>
                 <li><button id='drawOnModel' title='draw on the model with the brush'>draw on model</button></li>
                 <li><button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button></li>
-                <li><button id='resetTexture'>reset texture</button></li>
+                <li id='resetTexture'><button title="reset texture"><img src="./icons/reset.svg" alt="reset texture"></button></li>
                 <li><button id='importTexture'>import texture</button></li>
                 <li><button id='exportTexture'>export texture</button></li>
                 

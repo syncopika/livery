@@ -16,7 +16,7 @@ scene.background = new THREE.Color(0xffffff);
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.domElement.style.border = '1px solid #000';
 
-camera.position.set(0, 10, 21);
+camera.position.set(0, 3, 21);
 camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
 scene.add(camera);
 
@@ -122,8 +122,30 @@ function processGltf(name){
                 processMesh(obj3d);
             }
         });
-        console.log(currMeshes);
+        //console.log(currMeshes);
     }
+}
+
+// for finding the center point among multiple meshes' positions
+function getCentroid(){
+    // https://math.stackexchange.com/questions/195729/finding-the-virtual-center-of-a-cloud-of-points
+    // https://forum.unity.com/threads/get-centre-point-of-multiple-child-objects.131921/
+    let centroidX = 0;
+    let centroidY = 0;
+    let centroidZ = 0;
+    
+    Object.values(currMeshes).forEach((mesh) => {
+        centroidX += mesh.mesh.position.x;
+        centroidY += mesh.mesh.position.y;
+        centroidZ += mesh.mesh.position.z;
+    });
+    
+    const numMeshes = Object.values(currMeshes).length;
+    const xMean = centroidX / numMeshes;
+    const yMean = centroidY / numMeshes;
+    const zMean = centroidZ / numMeshes;
+    
+    return new THREE.Vector3(xMean, yMean, zMean);
 }
 
 function getModel(modelFilePath, name){
@@ -160,6 +182,15 @@ function processMesh(mesh){
 function update(){
     requestAnimationFrame(update);
     controls.update();
+    
+    // TODO: 
+    // - allow turntable rotation toggling
+    // - use centroid to focus on model or determine the initial position of the camera
+    // - be able to adjust lighting, background color?
+    // improve UI
+    if(currModel) currModel.rotateY(Math.PI / 800);
+    
+    
     renderer.render(scene, camera);
 }
 
