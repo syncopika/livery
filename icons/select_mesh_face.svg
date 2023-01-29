@@ -39,37 +39,20 @@
         stroke-linecap="round"
         stroke-width="1"
     />
-
-    <!-- draw another cube -->
     <polyline
         points="
-            17 10,
-            20 8,
-            23 10,
-            20 12,
-            17 10,
-            17 14,
-            20 16,
-            23 14,
-            23 10
+            14 8,
+            11 6,
+            11 10,
+            14 12,
+            14 8
         "
         stroke="black"
-        fill="none"
+        fill="#bbb"
         stroke-linejoin="round"
         stroke-linecap="round"
         stroke-width="1"
     />
-    <polyline
-        points="
-            20 12,
-            20 16
-        "
-        stroke="black"
-        fill="none"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="1"
-    />   
     
     <!-- draw a hand -->
     <polyline

@@ -33,6 +33,7 @@
 
         .flex{
             display: flex;
+            flex-flow: wrap;
         }
         
         #display{
@@ -74,11 +75,12 @@
             vertical-align: bottom;
         }
         
+        /*
         button{
             margin: 3px;
             width: 80%;
             height: 80%;
-        }
+        }*/
         
         li{
             display: inline-block;
@@ -175,7 +177,9 @@
                                 </button>
                             </li>
                             <li>
-                                <button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button>
+                                <button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>
+                                    <img src="./icons/select_mesh_face.svg" alt="select mesh face">
+                                </button>
                             </li>
                         </ul>
                         
@@ -184,14 +188,15 @@
                         <p> texture controls </p>
                         <ul>
                             <li id='resetTexture'><button title="reset texture"><img src="./icons/reset.svg" alt="reset texture"></button></li>
-                            <li><button id='importTexture' title='import texture'><img src="./icons/import_texture.svg" alt="import texture"></button></li>
-                            <li><button id='exportTexture' title='export texture'><img src="./icons/import_texture.svg" alt="export texture" style="transform: rotate(180deg)"></button></li>
                             <li><button id='pickColorFromTexture' title="find a pixel's color from the texture canvas">find texture color</button></li>
                             <li><button id='toggleMaskingLayer'>toggle masking layer</button></li>
                             <li><button id='applyMaskingLayer'>apply masking layer</button></li>
                             <li><button id='clearMaskingLayer'>clear masking layer</button></li>
-                            <li><button id='updateModel'>update model</button></li>
+                            <li><button id='importTexture' title='import texture'><img src="./icons/import_texture.svg" alt="import texture"></button></li>
+                            <li><button id='exportTexture' title='export texture'><img src="./icons/import_texture.svg" alt="export texture" style="transform: rotate(180deg)"></button></li>
                         </ul>
+                        
+                        <button id='updateModel'>update model</button>
                         
                     </div>
                 </div>

@@ -555,13 +555,13 @@ document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
     selectingMeshFace = !selectingMeshFace;
         
     if(selectingMeshFace){
-        document.getElementById('selectMeshFace').style.border = '1px solid #0f0';
+        document.getElementById('selectMeshFace').style.borderColor = '#0f0';
         renderer.domElement.addEventListener('click', getFaceMesh);
     }else{
         const meshFaceLayer = document.getElementById('meshFaceLayer');
         meshFaceLayer.style.display = 'none';
 
-        document.getElementById('selectMeshFace').style.border = '';
+        document.getElementById('selectMeshFace').style.borderColor = '';
         renderer.domElement.removeEventListener('click', getFaceMesh);
     }
 });
@@ -599,10 +599,10 @@ document.getElementById('selectMesh').addEventListener('click', (evt) => {
     selectingMesh = !selectingMesh;
         
     if(selectingMesh){
-        document.getElementById('selectMesh').style.border = '1px solid #0f0';
+        document.getElementById('selectMesh').style.borderColor = '#0f0';
         renderer.domElement.addEventListener('click', selectMesh);
     }else{
-        document.getElementById('selectMesh').style.border = '';
+        document.getElementById('selectMesh').style.borderColor = '';
         renderer.domElement.removeEventListener('click', selectMesh);
     }
 });
@@ -611,10 +611,12 @@ let canvasLocked = false;
 document.getElementById('lockRotation').addEventListener('click', (evt) => {
     if(!canvasLocked){
         controls.noRotate = true;
-        evt.target.textContent = "unlock rotation";
+        document.getElementById('lockRotation').style.borderColor = '#0f0';
+        //evt.target.textContent = "unlock rotation";
     }else{
         controls.noRotate = false;
-        evt.target.textContent = "lock rotation";
+        document.getElementById('lockRotation').style.borderColor = '';
+        //evt.target.textContent = "lock rotation";
     }
     canvasLocked = !canvasLocked;
 });
@@ -695,18 +697,19 @@ function strokeModelDraw(){
 }
 
 let drawOnModel = false;
-document.getElementById('drawOnModel').style.border = '1px solid #f00';
+//document.getElementById('drawOnModel').style.borderColor = '#f00';
 document.getElementById('drawOnModel').addEventListener('click', (evt) => {
     const modelCanvas = renderer.domElement;
     if(!drawOnModel){
-        document.getElementById('drawOnModel').style.border = '1px solid #0f0';
+        document.getElementById('drawOnModel').style.borderColor = '#0f0';
         const modelDisplay = renderer.domElement;
         modelDisplay.addEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.addEventListener('pointerup', brushStopModelDraw);
         modelDisplay.addEventListener('pointermove', brushMoveModelDraw);
         modelDisplay.addEventListener('pointerleave', brushStopModelDraw);
     }else{
-        document.getElementById('drawOnModel').style.border = '1px solid #f00';
+        //document.getElementById('drawOnModel').style.borderColor = '#f00';
+        document.getElementById('drawOnModel').style.borderColor = '';
         const modelDisplay = renderer.domElement;
         modelDisplay.removeEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.removeEventListener('pointerup', brushStopModelDraw);
