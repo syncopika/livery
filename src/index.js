@@ -555,13 +555,13 @@ document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
     selectingMeshFace = !selectingMeshFace;
         
     if(selectingMeshFace){
-        evt.target.style.border = '1px solid #0f0';
+        document.getElementById('selectMeshFace').style.border = '1px solid #0f0';
         renderer.domElement.addEventListener('click', getFaceMesh);
     }else{
         const meshFaceLayer = document.getElementById('meshFaceLayer');
         meshFaceLayer.style.display = 'none';
 
-        evt.target.style.border = '';
+        document.getElementById('selectMeshFace').style.border = '';
         renderer.domElement.removeEventListener('click', getFaceMesh);
     }
 });
@@ -599,10 +599,10 @@ document.getElementById('selectMesh').addEventListener('click', (evt) => {
     selectingMesh = !selectingMesh;
         
     if(selectingMesh){
-        evt.target.style.border = '1px solid #0f0';
+        document.getElementById('selectMesh').style.border = '1px solid #0f0';
         renderer.domElement.addEventListener('click', selectMesh);
     }else{
-        evt.target.style.border = '';
+        document.getElementById('selectMesh').style.border = '';
         renderer.domElement.removeEventListener('click', selectMesh);
     }
 });

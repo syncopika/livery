@@ -22,26 +22,29 @@
         stroke-linejoin="round"
         fill="none"
         stroke-width="2"
+        stroke-linecap="round"
     />
     <path 
         d="
-            M 22 17
+            M 21 17
             l -6.5 0.3
         "
         stroke="black"
         stroke-linejoin="round"
         fill="none"
         stroke-width="2"
+        stroke-linecap="round"
     />
     <path 
         d="
-            M 21 16.5
+            M 21 17
             l 0.5 5.5
         "
         stroke="black"
         stroke-linejoin="round"
         fill="none"
         stroke-width="2"
+        stroke-linecap="round"
     />
 </svg>
 

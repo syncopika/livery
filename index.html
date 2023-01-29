@@ -20,7 +20,7 @@
             padding: 0px 5px 5px 5px;
         }
         
-        #colorWheelContainer{
+        #controls{
             border: 1px solid #000;
             margin-top: 1%;
             padding: 3px;
@@ -65,9 +65,10 @@
             cursor: crosshair;
         }
         
+        /*
         #colorPickedfromTexture{
             width: 30%;
-        }
+        }*/
         
         #brushSize{
             vertical-align: bottom;
@@ -75,6 +76,8 @@
         
         button{
             margin: 3px;
+            width: 80%;
+            height: 80%;
         }
         
         li{
@@ -85,55 +88,32 @@
             touch-action: none;
         }
         
+        img {
+            width: 100%;
+            height: 100%;
+        }
+        
     </style>
     
     <body>
+        <!--
         <button class="icon">
             <i class="fa fa-bars"></i>
         </button>
+        -->
+        
         <div id='header'>
             <h1> livery customizer </h1>
             <p> <strong>instructions:</strong> Use a mouse to draw on the canvas below containing the texture of the model. Then click the 'update model' button. You can also rotate the model by clicking on the canvas of the model and moving your mouse (it has trackball controls). </p>
             <p> You can also paste in an image via ctrl+v and drag it into place, as well as resize it by moving the mouse around after pressing the 's' key or rotate it with the mouse wheel after pressing the 'r' key. To apply a pasted image to the underlying canvas, click outside the texture canvas. To cancel, press esc. </p>
             <p> To use the masking layer, toggle it first. Then paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
-            
-            <ul id='toolbar'>                
-                <li>
-                    <label for='selectModel'> model: </label>
-                    <select id='selectModel'>
-                        <option value="f-16" selected>jet</option>
-                        <option value="porsche">car</option>
-                    </select>
-                </li>
-                
-                <li><button id='importModel'>import model</button></li>
-                
-                <li><button id='selectMesh' title='select mesh to edit texture of'>select mesh</button></li>
-                <li><button id='pickColorFromTexture' title="find a pixel's color from the texture canvas">find texture color</button></li>
-                <li id='toggleWireframe'>
-                    <button title="toggle wireframe"><img src="./icons/wireframe.svg" alt="toggle wireframe"></button>
-                </li>
-                <li id='lockRotation'>
-                    <button title="lock trackball rotation"><img src="./icons/lock_rotation.svg" alt="lock trackball rotation"></button>
-                </li>
-                <li><button id='drawOnModel' title='draw on the model with the brush'>draw on model</button></li>
-                <li><button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button></li>
-                <li id='resetTexture'><button title="reset texture"><img src="./icons/reset.svg" alt="reset texture"></button></li>
-                <li><button id='importTexture'>import texture</button></li>
-                <li><button id='exportTexture'>export texture</button></li>
-                
-                <li><button id='toggleMaskingLayer'>toggle masking layer</button></li>
-                <li><button id='applyMaskingLayer'>apply masking layer</button></li>
-                <li><button id='clearMaskingLayer'>clear masking layer</button></li>
-                <li><button id='updateModel'>update model</button></li>
-            </ul>
 
         </div>
         
         <div class='flex'>
             <div id='display'>
                 <canvas id="modelCanvas"></canvas>
-                <div id="colorWheelContainer">
+                <div id="controls">
                     <div>
                         <span>brush size: </span>
                         <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
@@ -157,6 +137,62 @@
                         <br />
                         
                         <p id='colorPickedfromTexture'>found color goes here</p>
+                        
+                        <div id="colorWheelContainer"></div>
+                        
+                        <!-- buttons specific to model -->
+                        <hr />
+                        <p> model controls </p>
+                        <label for='selectModel'> select model: </label>
+                        <select id='selectModel'>
+                            <option value="f-16" selected>jet</option>
+                            <option value="porsche">car</option>
+                        </select>
+                        <ul id='toolbar'>
+                            <li>
+                                <button id='importModel' title='import model'>
+                                    <img src="./icons/import_texture.svg" alt="import model">
+                                </button>
+                            </li>
+                            <li>
+                                <button id='selectMesh' title='select mesh to edit texture of'>
+                                    <img src="./icons/select_mesh.svg" alt="select mesh to edit texture of">
+                                </button>
+                            </li>
+                            <li>
+                               <button id='toggleWireframe' title="toggle wireframe">
+                                    <img src="./icons/wireframe.svg" alt="toggle wireframe">
+                                </button>
+                            </li>
+                            <li>
+                                <button id='lockRotation' title="lock trackball rotation">
+                                    <img src="./icons/lock_rotation.svg" alt="lock trackball rotation">
+                                </button>
+                            </li>
+                            <li>
+                                <button id='drawOnModel' title='draw on the model with the brush'>
+                                    <img src="./icons/pencil.svg" alt="draw on model">
+                                </button>
+                            </li>
+                            <li>
+                                <button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>find mesh face</button>
+                            </li>
+                        </ul>
+                        
+                        <!-- buttons specific to texture -->
+                        <hr />
+                        <p> texture controls </p>
+                        <ul>
+                            <li id='resetTexture'><button title="reset texture"><img src="./icons/reset.svg" alt="reset texture"></button></li>
+                            <li><button id='importTexture' title='import texture'><img src="./icons/import_texture.svg" alt="import texture"></button></li>
+                            <li><button id='exportTexture' title='export texture'><img src="./icons/import_texture.svg" alt="export texture" style="transform: rotate(180deg)"></button></li>
+                            <li><button id='pickColorFromTexture' title="find a pixel's color from the texture canvas">find texture color</button></li>
+                            <li><button id='toggleMaskingLayer'>toggle masking layer</button></li>
+                            <li><button id='applyMaskingLayer'>apply masking layer</button></li>
+                            <li><button id='clearMaskingLayer'>clear masking layer</button></li>
+                            <li><button id='updateModel'>update model</button></li>
+                        </ul>
+                        
                     </div>
                 </div>
             </div>
