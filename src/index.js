@@ -188,8 +188,7 @@ function update(){
     // - use centroid to focus on model or determine the initial position of the camera
     // - be able to adjust lighting, background color?
     // improve UI
-    if(currModel) currModel.rotateY(Math.PI / 800);
-    
+    //if(currModel) currModel.rotateY(Math.PI / 800);
     
     renderer.render(scene, camera);
 }
@@ -427,7 +426,8 @@ function getColor(evt){
         const colorPicked = (currCanvas.getContext('2d')).getImageData(x, y, 1, 1).data;
         document.getElementById('colorPickedfromTexture').textContent = `found color: rgba(${colorPicked[0]},${colorPicked[1]},${colorPicked[2]},${colorPicked[3]})`;
         document.getElementById('colorPickedfromTexture').style.backgroundColor = `rgba(${colorPicked[0]},${colorPicked[1]},${colorPicked[2]},${colorPicked[3]})`;
-        document.getElementById('pickColorFromTexture').style.border = '';
+        
+        document.getElementById('pickColorFromTexture').style.borderColor = '';
         
         if(!maskingLayerOn){
             currCanvas.addEventListener('pointerdown', brushStart);
@@ -442,7 +442,7 @@ function getColor(evt){
 }
 
 document.getElementById('pickColorFromTexture').addEventListener('click', (evt) => {
-    evt.target.style.border = '1px solid #00ff00';
+    document.getElementById('pickColorFromTexture').style.borderColor = '#00ff00';
     
     pickColorFromTexture = true;
     
