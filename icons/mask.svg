@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="48" 
+   height="48" 
+   viewBox="0 0 24 24"
+>
+    <!-- draw a mask -->
+    <circle
+        cx="12"
+        cy="12"
+        r="9"
+        fill="none"
+        stroke="black"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="1"
+    />
+    <circle
+        cx="8"
+        cy="9"
+        r="2"
+        fill="none"
+        stroke="black"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="1"
+    />
+    <circle
+        cx="16"
+        cy="9"
+        r="2"
+        fill="none"
+        stroke="black"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="1"
+    />
+    <polyline
+        points="
+            7 14.5,
+            8 14,
+            9 14.5,
+            12 16,
+            11 15.5,
+            12 16,
+            15 14.5,
+            16 14,
+            17 14.5,
+            15 17,
+            13 18,
+            12 18,
+            11 18,
+            9 17,
+            8 16,
+            7 14.5
+        "
+        fill="none"
+        stroke="black"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="1"
+    />
+</svg>
+
