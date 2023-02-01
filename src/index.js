@@ -16,7 +16,7 @@ scene.background = new THREE.Color(0xffffff);
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.domElement.style.border = '1px solid #000';
 
-camera.position.set(0, 3, 21);
+camera.position.set(0, 8, 26);
 camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
 scene.add(camera);
 
