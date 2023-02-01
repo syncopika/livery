@@ -16,7 +16,7 @@ scene.background = new THREE.Color(0xffffff);
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.domElement.style.border = '1px solid #000';
 
-camera.position.set(0, 10, 21);
+camera.position.set(0, 8, 26);
 camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
 scene.add(camera);
 
@@ -122,8 +122,30 @@ function processGltf(name){
                 processMesh(obj3d);
             }
         });
-        console.log(currMeshes);
+        //console.log(currMeshes);
     }
+}
+
+// for finding the center point among multiple meshes' positions
+function getCentroid(){
+    // https://math.stackexchange.com/questions/195729/finding-the-virtual-center-of-a-cloud-of-points
+    // https://forum.unity.com/threads/get-centre-point-of-multiple-child-objects.131921/
+    let centroidX = 0;
+    let centroidY = 0;
+    let centroidZ = 0;
+    
+    Object.values(currMeshes).forEach((mesh) => {
+        centroidX += mesh.mesh.position.x;
+        centroidY += mesh.mesh.position.y;
+        centroidZ += mesh.mesh.position.z;
+    });
+    
+    const numMeshes = Object.values(currMeshes).length;
+    const xMean = centroidX / numMeshes;
+    const yMean = centroidY / numMeshes;
+    const zMean = centroidZ / numMeshes;
+    
+    return new THREE.Vector3(xMean, yMean, zMean);
 }
 
 function getModel(modelFilePath, name){
@@ -160,6 +182,14 @@ function processMesh(mesh){
 function update(){
     requestAnimationFrame(update);
     controls.update();
+    
+    // TODO: 
+    // - allow turntable rotation toggling
+    // - use centroid to focus on model or determine the initial position of the camera
+    // - be able to adjust lighting, background color?
+    // improve UI
+    //if(currModel) currModel.rotateY(Math.PI / 800);
+    
     renderer.render(scene, camera);
 }
 
@@ -396,7 +426,8 @@ function getColor(evt){
         const colorPicked = (currCanvas.getContext('2d')).getImageData(x, y, 1, 1).data;
         document.getElementById('colorPickedfromTexture').textContent = `found color: rgba(${colorPicked[0]},${colorPicked[1]},${colorPicked[2]},${colorPicked[3]})`;
         document.getElementById('colorPickedfromTexture').style.backgroundColor = `rgba(${colorPicked[0]},${colorPicked[1]},${colorPicked[2]},${colorPicked[3]})`;
-        document.getElementById('pickColorFromTexture').style.border = '';
+        
+        document.getElementById('pickColorFromTexture').style.borderColor = '';
         
         if(!maskingLayerOn){
             currCanvas.addEventListener('pointerdown', brushStart);
@@ -411,7 +442,7 @@ function getColor(evt){
 }
 
 document.getElementById('pickColorFromTexture').addEventListener('click', (evt) => {
-    evt.target.style.border = '1px solid #00ff00';
+    document.getElementById('pickColorFromTexture').style.borderColor = '#00ff00';
     
     pickColorFromTexture = true;
     
@@ -524,13 +555,13 @@ document.getElementById('selectMeshFace').addEventListener('click', (evt) => {
     selectingMeshFace = !selectingMeshFace;
         
     if(selectingMeshFace){
-        evt.target.style.border = '1px solid #0f0';
+        document.getElementById('selectMeshFace').style.borderColor = '#0f0';
         renderer.domElement.addEventListener('click', getFaceMesh);
     }else{
         const meshFaceLayer = document.getElementById('meshFaceLayer');
         meshFaceLayer.style.display = 'none';
 
-        evt.target.style.border = '';
+        document.getElementById('selectMeshFace').style.borderColor = '';
         renderer.domElement.removeEventListener('click', getFaceMesh);
     }
 });
@@ -568,10 +599,10 @@ document.getElementById('selectMesh').addEventListener('click', (evt) => {
     selectingMesh = !selectingMesh;
         
     if(selectingMesh){
-        evt.target.style.border = '1px solid #0f0';
+        document.getElementById('selectMesh').style.borderColor = '#0f0';
         renderer.domElement.addEventListener('click', selectMesh);
     }else{
-        evt.target.style.border = '';
+        document.getElementById('selectMesh').style.borderColor = '';
         renderer.domElement.removeEventListener('click', selectMesh);
     }
 });
@@ -580,10 +611,12 @@ let canvasLocked = false;
 document.getElementById('lockRotation').addEventListener('click', (evt) => {
     if(!canvasLocked){
         controls.noRotate = true;
-        evt.target.textContent = "unlock rotation";
+        document.getElementById('lockRotation').style.borderColor = '#0f0';
+        //evt.target.textContent = "unlock rotation";
     }else{
         controls.noRotate = false;
-        evt.target.textContent = "lock rotation";
+        document.getElementById('lockRotation').style.borderColor = '';
+        //evt.target.textContent = "lock rotation";
     }
     canvasLocked = !canvasLocked;
 });
@@ -664,18 +697,19 @@ function strokeModelDraw(){
 }
 
 let drawOnModel = false;
-document.getElementById('drawOnModel').style.border = '1px solid #f00';
+//document.getElementById('drawOnModel').style.borderColor = '#f00';
 document.getElementById('drawOnModel').addEventListener('click', (evt) => {
     const modelCanvas = renderer.domElement;
     if(!drawOnModel){
-        document.getElementById('drawOnModel').style.border = '1px solid #0f0';
+        document.getElementById('drawOnModel').style.borderColor = '#0f0';
         const modelDisplay = renderer.domElement;
         modelDisplay.addEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.addEventListener('pointerup', brushStopModelDraw);
         modelDisplay.addEventListener('pointermove', brushMoveModelDraw);
         modelDisplay.addEventListener('pointerleave', brushStopModelDraw);
     }else{
-        document.getElementById('drawOnModel').style.border = '1px solid #f00';
+        //document.getElementById('drawOnModel').style.borderColor = '#f00';
+        document.getElementById('drawOnModel').style.borderColor = '';
         const modelDisplay = renderer.domElement;
         modelDisplay.removeEventListener('pointerdown', brushStartModelDraw);
         modelDisplay.removeEventListener('pointerup', brushStopModelDraw);
