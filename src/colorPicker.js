@@ -46,14 +46,14 @@ colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
 colorWheelContext.fill();
 
 // make transparent white pickable too (and add a black outline)
-colorWheelContext.beginPath();
-colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI); // border around the white 
-colorWheelContext.stroke();
+//colorWheelContext.beginPath();
+//colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI); // border around the white 
+//colorWheelContext.stroke();
 
 // make sure circle is filled with transparent white
-colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
-colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI);
-colorWheelContext.fill();
+//colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+//colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI);
+//colorWheelContext.fill();
 
 loc.appendChild(colorWheel);
 

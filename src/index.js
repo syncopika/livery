@@ -1,3 +1,9 @@
+// TODO: 
+// - allow turntable rotation toggling //if(currModel) currModel.rotateY(Math.PI / 800);
+// - be able to adjust lighting?
+// - implement animation control
+// - improve UI
+
 let currModel = null;
 let currMeshes = {};
 let currModelTextureMesh = null; // use this variable to keep track of the mesh whose texture is being edited
@@ -11,13 +17,13 @@ const renderer = new THREE.WebGLRenderer({antialias: true, canvas: container});
 const fov = 60;
 const camera = new THREE.PerspectiveCamera(fov, container.clientWidth / container.clientHeight, 0.01, 1000);
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
+scene.background = new THREE.Color(0xcccccc);
 
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.domElement.style.border = '1px solid #000';
 
-camera.position.set(0, 8, 26);
-camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
+//camera.position.set(0, 10, 28);
+//camera.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/8);
 scene.add(camera);
 
 // https://discourse.threejs.org/t/solved-glb-model-is-very-dark/6258
@@ -47,12 +53,20 @@ update();
 
 function processGltf(name){
     return function(gltf){
-        //console.log(gltf);
         
         clearLiveryCanvas();
         
         currMeshes = {};
         
+        // https://discourse.threejs.org/t/find-the-size-of-a-loaded-gltf-model/38515
+        // https://stackoverflow.com/questions/14614252/how-to-fit-camera-to-object
+        const box = new THREE.Box3().setFromObject(gltf.scene);
+        const { x: boxWidth, y: boxHeight, z: boxDepth } = box.getSize(new THREE.Vector3()); // Returns the width, height and depth of this box
+
+        const camFov = fov * (Math.PI / 180); // convert to radians
+        const camDist = Math.abs(Math.max(boxWidth, boxHeight) / Math.atan(camFov / 2));
+        camera.position.set(0, 0, camDist);
+
         gltf.scene.traverse((child) => {
             if(child.type === "Mesh" || child.type === "SkinnedMesh"){
                 currMeshes[child.name] = {mesh: null, texture: null};
@@ -126,7 +140,7 @@ function processGltf(name){
     }
 }
 
-// for finding the center point among multiple meshes' positions
+/* for finding the center point among multiple meshes' positions
 function getCentroid(){
     // https://math.stackexchange.com/questions/195729/finding-the-virtual-center-of-a-cloud-of-points
     // https://forum.unity.com/threads/get-centre-point-of-multiple-child-objects.131921/
@@ -146,7 +160,7 @@ function getCentroid(){
     const zMean = centroidZ / numMeshes;
     
     return new THREE.Vector3(xMean, yMean, zMean);
-}
+}*/
 
 function getModel(modelFilePath, name){
     return new Promise((resolve, reject) => {
@@ -182,14 +196,6 @@ function processMesh(mesh){
 function update(){
     requestAnimationFrame(update);
     controls.update();
-    
-    // TODO: 
-    // - allow turntable rotation toggling
-    // - use centroid to focus on model or determine the initial position of the camera
-    // - be able to adjust lighting, background color?
-    // improve UI
-    //if(currModel) currModel.rotateY(Math.PI / 800);
-    
     renderer.render(scene, camera);
 }
 
@@ -413,6 +419,10 @@ canvas.addEventListener('pointerleave', brushStop);
 
 document.getElementById('colorInput').addEventListener('change', (evt) => {
     evt.target.style.border = '3px solid ' + evt.target.value;
+});
+
+document.getElementById('bgColorInput').addEventListener('change', (evt) => {
+    scene.background = new THREE.Color(evt.target.value);
 });
 
 function getColor(evt){
