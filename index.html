@@ -43,6 +43,11 @@
             width: 15%;
             transition: 0.5s;
         }
+        
+        .section-title {
+            font-weight: bold;
+            text-align: center;
+        }
 
         #colorWheel{
             display: block;
@@ -107,8 +112,8 @@
         }
         
         img {
-            width: 90%;
-            height: 90%;
+            width: 70%;
+            height: 70%;
         }
         
     </style>
@@ -130,32 +135,9 @@
                 <i class="fa fa-bars"></i>
             </button>
             <br />
-            <div>
-                <span>brush size: </span>
-                <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
-                <label for='brushSize' id="currBrushSize">3</label>
-                
-                <br /><br />
-                
-                <label for='colorInput'>pen color: </label>
-                <input id='colorInput' name="colorInput" type="text" value="rgba(0,0,0,255)"/>
-                
-                <br /><br />
-
-                <label for='bgColorInput'>background color: </label>
-                <input id='bgColorInput' name="bgColorInput" type="text" value="rgb(255,255,255)"/>
-
-                <br />
-                
-                <p id='colorPickedfromTexture'>picked texture color goes here</p>
-
-                <br />
-                
-                <div id="colorWheelContainer"></div>
-                
+            <div>                
                 <!-- buttons specific to model -->
-                <hr />
-                <p> model controls </p>
+                <p class="section-title"> model controls </p>
                 <label for='selectModel'> select model: </label>
                 <select id='selectModel'>
                     <option value="f-16" selected>jet</option>
@@ -196,7 +178,7 @@
                 
                 <!-- buttons specific to texture -->
                 <hr />
-                <p> texture controls </p>
+                <p class="section-title"> texture controls </p>
                 <label for='imageFilters'> filter: </label>
                 <select id='imageFilters'>
                     <option value=""></option>
@@ -241,6 +223,31 @@
                         </button>
                     </li>
                 </ul>
+                
+                <!-- brush section -->
+                <hr />
+                <p class="section-title"> brush controls </p>
+                <span>brush size: </span>
+                <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
+                <label for='brushSize' id="currBrushSize">3</label>
+                
+                <br /><br />
+                
+                <label for='colorInput'>pen color: </label>
+                <input id='colorInput' name="colorInput" type="text" value="rgba(0,0,0,255)"/>
+                
+                <br /><br />
+
+                <label for='bgColorInput'>background color: </label>
+                <input id='bgColorInput' name="bgColorInput" type="text" value="rgb(255,255,255)"/>
+
+                <br />
+                
+                <p id='colorPickedfromTexture'>picked texture color goes here</p>
+
+                <br />
+                
+                <div id="colorWheelContainer"></div>
                 
                 <button id='updateModel'>update model</button>
                 
