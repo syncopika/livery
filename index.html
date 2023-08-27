@@ -6,6 +6,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js" integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg==" crossorigin="anonymous"></script>
         <script src='src/GLTFLoader.js'></script>
         <script src='src/TrackballControls.js'></script>
+        <script src='src/GLTFExporter.js'></script>
     </head>
     
     <style>
@@ -138,7 +139,7 @@
             <br />
             <br />
             
-            <button id='updateModel'>update model</button>
+            <button id='updateModel' style='display: block; margin: 0 auto'>update model</button>
                 
             <hr />    
                 
@@ -175,6 +176,11 @@
                     <li>
                         <button id='selectMeshFace' title='click on the model to find the corresponding triangle on the texture'>
                             <img src="./icons/select_mesh_face.svg" alt="select mesh face">
+                        </button>
+                    </li>
+                    <li>
+                        <button id='exportModel' title='export model'>
+                            <img src="./icons/import_texture.svg" alt="export model" style="transform: rotate(180deg)">
                         </button>
                     </li>
                 </ul>

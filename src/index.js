@@ -756,3 +756,32 @@ document.getElementById('dirLightZ').addEventListener('input', (evt) => {
     dirLight.position.z = evt.target.value;
     document.getElementById('dirLightZVal').textContent = evt.target.value;
 });
+
+// handle gltf exporting
+// https://github.com/mrdoob/three.js/blob/master/examples/misc_exporter_gltf.html
+const exporter = new THREE.GLTFExporter();
+document.getElementById('exportModel').addEventListener('click', () => {
+    exporter.parse(
+        scene, 
+        function(gltf){
+            const output = JSON.stringify(gltf, null, 2);
+            
+            let filename = prompt("what would you like to name the file?");
+            if(!filename){
+                filename = "livery-output";
+            }
+            filename += ".gltf";
+            
+            const blob = new Blob([output], {type: 'application/octet-stream'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        },
+        function(err){
+            console.log("an error happened on export!");
+        },
+        {}, // options
+    );
+});
