@@ -134,14 +134,22 @@
             <button class="icon toggleControls">
                 <i class="fa fa-bars"></i>
             </button>
+            
             <br />
+            <br />
+            
+            <button id='updateModel'>update model</button>
+                
+            <hr />    
+                
             <div>                
                 <!-- buttons specific to model -->
                 <p class="section-title"> model controls </p>
                 <label for='selectModel'> select model: </label>
                 <select id='selectModel'>
-                    <option value="f-16" selected>jet</option>
-                    <option value="porsche">car</option>
+                    <option value="f-16" selected>f16</option>
+                    <option value="porsche">porsche</option>
+                    <option value="nissan-gtr">nissan gt-r</option>
                 </select>
                 <ul id='toolbar'>
                     <li>
@@ -152,11 +160,6 @@
                     <li>
                         <button id='selectMesh' title='select mesh to edit texture of'>
                             <img src="./icons/select_mesh.svg" alt="select mesh to edit texture of">
-                        </button>
-                    </li>
-                    <li>
-                       <button id='toggleWireframe' title="toggle wireframe">
-                            <img src="./icons/wireframe.svg" alt="toggle wireframe">
                         </button>
                     </li>
                     <li>
@@ -175,6 +178,9 @@
                         </button>
                     </li>
                 </ul>
+                
+                <label for="toggleWireframe">wireframe: </label> <input type="checkbox" id="toggleWireframe">
+                <label for="toggleShading">flat shading: </label> <input type="checkbox" id="toggleShading">
                 
                 <!-- buttons specific to texture -->
                 <hr />
@@ -249,7 +255,25 @@
                 
                 <div id="colorWheelContainer"></div>
                 
-                <button id='updateModel'>update model</button>
+                
+                <!-- lighting control -->
+                <hr />
+                <p class="section-title"> directional light control </p>
+                <label for='dirLightX'>x pos: </label>
+                <input id='dirLightX' type="range" max="100" min="-100" value="0" step="1"></input>
+                <label id='dirLightXVal'>0</label>
+                
+                <br />
+                
+                <label for='dirLightY'>y pos: </label>
+                <input id='dirLightY' type="range" max="100" min="-100" value="100" step="1"></input>
+                <label id='dirLightYVal'>100</label>
+                
+                <br />
+                
+                <label for='dirLightZ'>z pos: </label>
+                <input id='dirLightZ' type="range" max="100" min="-100" value="-10" step="1"></input>
+                <label id='dirLightZVal'>-10</label>
                 
             </div>
         </div>
