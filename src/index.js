@@ -32,7 +32,7 @@ hemiLight.position.set(0, 200, 0);
 scene.add(hemiLight);
 
 const dirLight = new THREE.DirectionalLight( 0xffffff );
-dirLight.position.set( 0, 100, -10);
+dirLight.position.set(0, 100, -10);
 scene.add(dirLight);
 
 // set up trackball control
@@ -729,3 +729,59 @@ document.getElementById('drawOnModel').addEventListener('click', (evt) => {
     drawOnModel = !drawOnModel;
 });
 
+// allow toggle between smooth and flat shading
+document.getElementById('toggleShading').addEventListener('change', (evt) => {
+    if(evt.target.checked){
+        console.log("flat shading");
+        currModelTextureMesh.material.flatShading = true;
+    }else{
+        currModelTextureMesh.material.flatShading = false;
+    }
+    
+    currModelTextureMesh.material.needsUpdate = true;
+});
+
+// control lighting position
+document.getElementById('dirLightX').addEventListener('input', (evt) => {
+    dirLight.position.x = evt.target.value;
+    document.getElementById('dirLightXVal').textContent = evt.target.value;
+});
+
+document.getElementById('dirLightY').addEventListener('input', (evt) => {
+    dirLight.position.y = evt.target.value;
+    document.getElementById('dirLightYVal').textContent = evt.target.value;
+});
+
+document.getElementById('dirLightZ').addEventListener('input', (evt) => {
+    dirLight.position.z = evt.target.value;
+    document.getElementById('dirLightZVal').textContent = evt.target.value;
+});
+
+// handle gltf exporting
+// https://github.com/mrdoob/three.js/blob/master/examples/misc_exporter_gltf.html
+const exporter = new THREE.GLTFExporter();
+document.getElementById('exportModel').addEventListener('click', () => {
+    exporter.parse(
+        scene, 
+        function(gltf){
+            const output = JSON.stringify(gltf, null, 2);
+            
+            let filename = prompt("what would you like to name the file?");
+            if(!filename){
+                filename = "livery-output";
+            }
+            filename += ".gltf";
+            
+            const blob = new Blob([output], {type: 'application/octet-stream'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        },
+        function(err){
+            console.log("an error happened on export!");
+        },
+        {}, // options
+    );
+});

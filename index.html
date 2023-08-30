@@ -6,6 +6,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js" integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg==" crossorigin="anonymous"></script>
         <script src='src/GLTFLoader.js'></script>
         <script src='src/TrackballControls.js'></script>
+        <script src='src/GLTFExporter.js'></script>
     </head>
     
     <style>
@@ -42,6 +43,11 @@
             left: 0;
             width: 15%;
             transition: 0.5s;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            text-align: center;
         }
 
         #colorWheel{
@@ -107,8 +113,12 @@
         }
         
         img {
-            width: 90%;
-            height: 90%;
+            width: 70%;
+            height: 70%;
+        }
+        
+        span {
+            font-size: 14px;
         }
         
     </style>
@@ -119,47 +129,31 @@
         </button>
         
         <div id='header'>
-            <h1> livery customizer </h1>
-            <p> <strong>instructions:</strong> Use a mouse to draw on the canvas below containing the texture of the model. Then click the 'update model' button. You can also rotate the model by clicking on the canvas of the model and moving your mouse (it has trackball controls). </p>
-            <p> You can also paste in an image via ctrl+v and drag it into place, as well as resize it by moving the mouse around after pressing the 's' key or rotate it with the mouse wheel after pressing the 'r' key. To apply a pasted image to the underlying canvas, click outside the texture canvas. To cancel, press esc. </p>
-            <p> To use the masking layer, toggle it first. Then paint the area on the masking layer that you want to apply to the main layer. Afterwards you can paste an image over the area you just painted and only the part of the pasted image that matches the painted area will be extracted. Click outside the texture canvas to set the pasted image. Hit the 'apply masking layer' button to finalize changes and update the model with the 'update model' button.</p>
+            <h1> livery customizer <span><a href='https://github.com/syncopika/livery' target="_blank"> src </a></span></h1>
         </div>
         
         <div id="controls" class="controls-off">
             <button class="icon toggleControls">
                 <i class="fa fa-bars"></i>
             </button>
+            
             <br />
-            <div>
-                <span>brush size: </span>
-                <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
-                <label for='brushSize' id="currBrushSize">3</label>
+            <br />
+            
+            <button id='updateModel' style='display: block; margin: 0 auto'>update model</button>
                 
-                <br /><br />
+            <hr />    
                 
-                <label for='colorInput'>pen color: </label>
-                <input id='colorInput' name="colorInput" type="text" value="rgba(0,0,0,255)"/>
-                
-                <br /><br />
-
-                <label for='bgColorInput'>background color: </label>
-                <input id='bgColorInput' name="bgColorInput" type="text" value="rgb(255,255,255)"/>
-
-                <br />
-                
-                <p id='colorPickedfromTexture'>picked texture color goes here</p>
-
-                <br />
-                
-                <div id="colorWheelContainer"></div>
-                
+            <div>                
                 <!-- buttons specific to model -->
-                <hr />
-                <p> model controls </p>
+                <p class="section-title"> model controls </p>
                 <label for='selectModel'> select model: </label>
                 <select id='selectModel'>
-                    <option value="f-16" selected>jet</option>
-                    <option value="porsche">car</option>
+                    <option value="f-16" selected>f16</option>
+                    <option value="porsche">porsche</option>
+                    <option value="nissan-gtr">nissan gt-r</option>
+                    <option value="cow">cow</option>
+                    <option value="turtle">turtle</option>
                 </select>
                 <ul id='toolbar'>
                     <li>
@@ -170,11 +164,6 @@
                     <li>
                         <button id='selectMesh' title='select mesh to edit texture of'>
                             <img src="./icons/select_mesh.svg" alt="select mesh to edit texture of">
-                        </button>
-                    </li>
-                    <li>
-                       <button id='toggleWireframe' title="toggle wireframe">
-                            <img src="./icons/wireframe.svg" alt="toggle wireframe">
                         </button>
                     </li>
                     <li>
@@ -192,11 +181,19 @@
                             <img src="./icons/select_mesh_face.svg" alt="select mesh face">
                         </button>
                     </li>
+                    <li>
+                        <button id='exportModel' title='export model'>
+                            <img src="./icons/import_texture.svg" alt="export model" style="transform: rotate(180deg)">
+                        </button>
+                    </li>
                 </ul>
+                
+                <label for="toggleWireframe">wireframe: </label> <input type="checkbox" id="toggleWireframe">
+                <label for="toggleShading">flat shading: </label> <input type="checkbox" id="toggleShading">
                 
                 <!-- buttons specific to texture -->
                 <hr />
-                <p> texture controls </p>
+                <p class="section-title"> texture controls </p>
                 <label for='imageFilters'> filter: </label>
                 <select id='imageFilters'>
                     <option value=""></option>
@@ -242,7 +239,50 @@
                     </li>
                 </ul>
                 
-                <button id='updateModel'>update model</button>
+                <!-- brush section -->
+                <hr />
+                <p class="section-title"> brush controls </p>
+                <span>brush size: </span>
+                <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
+                <label for='brushSize' id="currBrushSize">3</label>
+                
+                <br /><br />
+                
+                <label for='colorInput'>pen color: </label>
+                <input id='colorInput' name="colorInput" type="text" value="rgba(0,0,0,255)"/>
+                
+                <br /><br />
+
+                <label for='bgColorInput'>background color: </label>
+                <input id='bgColorInput' name="bgColorInput" type="text" value="rgb(255,255,255)"/>
+
+                <br />
+                
+                <p id='colorPickedfromTexture'>picked texture color goes here</p>
+
+                <br />
+                
+                <div id="colorWheelContainer"></div>
+                
+                
+                <!-- lighting control -->
+                <hr />
+                <p class="section-title"> directional light control </p>
+                <label for='dirLightX'>x pos: </label>
+                <input id='dirLightX' type="range" max="100" min="-100" value="0" step="1"></input>
+                <label id='dirLightXVal'>0</label>
+                
+                <br />
+                
+                <label for='dirLightY'>y pos: </label>
+                <input id='dirLightY' type="range" max="100" min="-100" value="100" step="1"></input>
+                <label id='dirLightYVal'>100</label>
+                
+                <br />
+                
+                <label for='dirLightZ'>z pos: </label>
+                <input id='dirLightZ' type="range" max="100" min="-100" value="-10" step="1"></input>
+                <label id='dirLightZVal'>-10</label>
                 
             </div>
         </div>
