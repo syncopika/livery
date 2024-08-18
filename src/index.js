@@ -66,6 +66,9 @@ function processGltf(name){
         const camFov = fov * (Math.PI / 180); // convert to radians
         const camDist = Math.abs(Math.max(boxWidth, boxHeight) / Math.atan(camFov / 2));
         camera.position.set(0, 0, camDist);
+        
+        // reset trackball control target to center
+        controls.target = new THREE.Vector3(0, 0, 0);
 
         gltf.scene.traverse((child) => {
             if(child.type === "Mesh" || child.type === "SkinnedMesh"){
@@ -108,19 +111,36 @@ function processGltf(name){
                 currModel = obj;
                 currModelTextureMesh = obj;
                 
-                //if(child.parent) console.log(child.parent);
+                // reminder that rotation/position/scale fields are immutable: https://github.com/mrdoob/three.js/issues/8940
                 if(child.parent && currMeshes[child.parent.name]){
                     currMeshes[child.parent.name].mesh.add(obj);
+                    obj.position.copy(child.position);
+                    obj.rotation.copy(child.rotation);
+                    obj.scale.copy(child.scale);
+                }else{
+                    if(child.parent && child.parent.type !== 'Scene'){
+                        // some models might have children that have parents that are
+                        // groups that may not exist in the model but we need to use the 
+                        // assigned parent's position/rotation/scale.
+                        //
+                        // I experienced this when exporting some .gltf files made up 
+                        // of .nif file assets that I imported into Blender (as .obj)
+                        obj.position.copy(child.parent.position);
+                        obj.rotation.copy(child.parent.rotation);
+                        obj.scale.copy(child.parent.scale);
+                    }else{
+                        obj.position.copy(child.position);
+                        obj.rotation.copy(child.rotation);
+                        obj.scale.copy(child.scale);
+                    }
                 }
-                
-                // reminder that rotation/position/scale fields are immutable: https://github.com/mrdoob/three.js/issues/8940
-                obj.rotation.copy(child.rotation);
-                obj.position.copy(child.position);
-                obj.scale.copy(child.scale);
                 
                 processMesh(obj);
                 
-            }else if(child.type === "Object3D" && (child.name.includes("Armature") || child.name.includes("Bone"))){
+            }else if(
+                child.type === "Object3D" && 
+                (child.name.includes("Armature") || child.name.includes("Bone"))
+            ){
                 const obj3d = new THREE.Object3D();
                 obj3d.position.copy(child.position);
                 obj3d.rotation.copy(child.rotation);
@@ -181,15 +201,9 @@ function getModel(modelFilePath, name){
 }
 
 function processMesh(mesh){
-    // the local axis of the imported mesh is a bit weird and not consistent with the world axis. so, to fix that,
-    // put it in a group object and just control the group object! the mesh is also just oriented properly initially when placed in the group.
-    //let playerAxesHelper = new THREE.AxesHelper(10);
-    //mesh.add(playerAxesHelper);
-    
     if(!mesh.parent){
         scene.add(mesh);
     }
-    
     update();
 }
 
@@ -755,6 +769,11 @@ document.getElementById('dirLightY').addEventListener('input', (evt) => {
 document.getElementById('dirLightZ').addEventListener('input', (evt) => {
     dirLight.position.z = evt.target.value;
     document.getElementById('dirLightZVal').textContent = evt.target.value;
+});
+
+document.getElementById('dirLightIntensity').addEventListener('input', (evt) => {
+    dirLight.intensity = evt.target.value;
+    document.getElementById('dirLightIntensityVal').textContent = evt.target.value;
 });
 
 // handle gltf exporting

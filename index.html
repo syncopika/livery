@@ -10,18 +10,18 @@
     </head>
     
     <style>
-        body{
+        body {
             font-family: monospace;
         }
         
-        #header{
+        #header {
             text-align: center;
             position: relative;
             display: block;
             padding: 0px 5px 5px 5px;
         }
         
-        #controls{
+        #controls {
             position: fixed;
             top: 0;
             border: 1px solid #000;
@@ -33,13 +33,13 @@
             box-sizing: border-box;
         }
         
-        .controls-off{
+        .controls-off {
             width: 0;
             left: -300px;
             transition: 0.5s;
         }
         
-        .controls-on{
+        .controls-on {
             left: 0;
             width: 15%;
             transition: 0.5s;
@@ -50,37 +50,37 @@
             text-align: center;
         }
 
-        #colorWheel{
+        #colorWheel {
             display: block;
             margin: 0 auto;
         }
 
-        .flex{
+        .flex {
             display: flex;
             flex-flow: wrap;
         }
         
-        #display{
+        #display {
             position: relative;
             display: block;
             margin: 0 auto;
         }
 
-        #modelCanvas{
+        #modelCanvas {
             width: 680px;
             height: 720px;
         }
         
-        #editArea{
+        #editArea {
             text-align: center;
             margin: 0 auto;
         }
         
-        #colorPickedfromTexture{
+        #colorPickedfromTexture {
             border: 1px solid #000;
         }
 
-        #liveryDisplay{
+        #liveryDisplay {
             position: relative;
             margin: 0px auto;
             padding: 1px;
@@ -88,27 +88,27 @@
             height: 100%;
         }
         
-        #liveryCanvas{
+        #liveryCanvas {
             border: 1px solid #000;
         }
         
-        #liveryCanvas:hover{
+        #liveryCanvas:hover {
             cursor: crosshair;
         }
         
-        #brushSize{
+        #brushSize {
             vertical-align: bottom;
         }
         
-        ul{
+        ul {
             padding: 0;
         }
         
-        li{
+        li {
             display: inline-block;
         }
         
-        canvas{
+        canvas {
             touch-action: none;
         }
         
@@ -150,6 +150,7 @@
                 <label for='selectModel'> select model: </label>
                 <select id='selectModel'>
                     <option value="f-16" selected>f16</option>
+                    <option value="biplane">biplane</option>
                     <option value="porsche">porsche</option>
                     <option value="nissan-gtr">nissan gt-r</option>
                     <option value="cow">cow</option>
@@ -242,7 +243,7 @@
                 <!-- brush section -->
                 <hr />
                 <p class="section-title"> brush controls </p>
-                <span>brush size: </span>
+                <span>size: </span>
                 <input id='brushSize' type="range" min="1" max="20" value="3" name="brushSize"/>
                 <label for='brushSize' id="currBrushSize">3</label>
                 
@@ -283,6 +284,12 @@
                 <label for='dirLightZ'>z pos: </label>
                 <input id='dirLightZ' type="range" max="100" min="-100" value="-10" step="1"></input>
                 <label id='dirLightZVal'>-10</label>
+                
+                <br />
+                
+                <label for='dirLightIntensity'>intensity: </label>
+                <input id='dirLightIntensity' type="range" max="3" min="0.1" value="1" step="0.1"></input>
+                <label id='dirLightIntensityVal'>1</label>
                 
             </div>
         </div>
