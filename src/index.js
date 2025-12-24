@@ -757,22 +757,22 @@ document.getElementById('toggleShading').addEventListener('change', (evt) => {
 
 // control lighting position
 document.getElementById('dirLightX').addEventListener('input', (evt) => {
-    dirLight.position.x = evt.target.value;
+    dirLight.position.x = parseInt(evt.target.value);
     document.getElementById('dirLightXVal').textContent = evt.target.value;
 });
 
 document.getElementById('dirLightY').addEventListener('input', (evt) => {
-    dirLight.position.y = evt.target.value;
+    dirLight.position.y = parseInt(evt.target.value);
     document.getElementById('dirLightYVal').textContent = evt.target.value;
 });
 
 document.getElementById('dirLightZ').addEventListener('input', (evt) => {
-    dirLight.position.z = evt.target.value;
+    dirLight.position.z = parseInt(evt.target.value);
     document.getElementById('dirLightZVal').textContent = evt.target.value;
 });
 
 document.getElementById('dirLightIntensity').addEventListener('input', (evt) => {
-    dirLight.intensity = evt.target.value;
+    dirLight.intensity = parseInt(evt.target.value);
     document.getElementById('dirLightIntensityVal').textContent = evt.target.value;
 });
 
