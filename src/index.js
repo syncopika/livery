@@ -1,6 +1,5 @@
 // TODO: 
 // - allow turntable rotation toggling //if(currModel) currModel.rotateY(Math.PI / 800);
-// - be able to adjust lighting?
 // - implement animation control
 // - improve UI
 
@@ -46,6 +45,7 @@ controls.panSpeed = 0.8;
 //controls.dynamicDampingFactor = 0.3;
 
 const raycaster = new THREE.Raycaster();
+const secondaryRaycaster = new THREE.Raycaster();
 
 getModel('models/f-16.gltf', 'f16');
 update();
@@ -107,7 +107,6 @@ function processGltf(name){
                 obj.name = child.name;
                 
                 currMeshes[child.name].mesh = obj;
-                
                 currModel = obj;
                 currModelTextureMesh = obj;
                 
@@ -358,6 +357,12 @@ let clickColor = [];
 let clickSize = [];
 let isDrawing = false;
 
+let symClickX = [];
+let symClickY = [];
+let symClickDrag = [];
+let symClickColor = [];
+let symClickSize = [];
+
 let isMaskBrush = false;
 let maskBrushColor = 'rgba(0, 0, 0, 200)';
 
@@ -389,6 +394,13 @@ function clearClick(){
     clickDrag = [];
     clickColor = [];
     clickSize = [];
+    
+    // TODO: figure out a better way to handle the symmetric points to draw
+    symClickX = [];
+    symClickY = [];
+    symClickDrag = [];
+    symClickColor = [];
+    symClickSize = [];
 }
 
 let currBrushSize = 3;
@@ -645,6 +657,14 @@ document.getElementById('lockRotation').addEventListener('click', (evt) => {
     canvasLocked = !canvasLocked;
 });
 
+// useful for debugging the symmetrical drawing logic
+function addMarker(worldPos, color){
+  const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 16);
+  const sphereMaterial = new THREE.MeshPhongMaterial({color: color || 0x0000ff});
+  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  scene.add(sphere);
+  sphere.position.copy(worldPos);
+} 
 
 // for drawing directly on the model
 let isDrawingOnModel = false;
@@ -680,8 +700,9 @@ function addClickModelDraw(ptrEvt, dragging){
     const intersects = raycaster.intersectObject(currModelTextureMesh);
     if(intersects.length > 0){
         const intersected = intersects[0];
+        //console.log(intersected);
         
-        const canvas = document.getElementById("liveryCanvas");
+        const canvas = document.getElementById('liveryCanvas');
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         const x = intersected.uv.x * canvasWidth
@@ -692,12 +713,56 @@ function addClickModelDraw(ptrEvt, dragging){
         clickColor.push(color);
         clickSize.push(size);
         clickDrag.push(true);
+        
+        // handle symmetry if desired
+        const symmetricalDrawingEnabled = document.getElementById('enableSymmetricalDrawing').checked;
+        if(symmetricalDrawingEnabled){
+            const selectedAxisToMirror = document.querySelector('input[name="symmetricalDrawing"]:checked').value;
+            let selectedAxis = new THREE.Vector3(1, 0, 0);
+            if(selectedAxisToMirror === 'y'){
+                selectedAxis = new THREE.Vector3(0, 1, 0);
+            }else if(selectedAxisToMirror === 'z'){
+                selectedAxis = new THREE.Vector3(0, 0, 1);
+            }
+            const intersectedPoint = intersected.point; // a vector3 - note this should be local to the mesh, not world
+            const midplaneAxis = selectedAxis;  // the plane that cuts through the middle of the object
+            const symmetricIntersectedPoint = intersectedPoint.clone().reflect(midplaneAxis);
+            
+            // position 2nd raycaster away but towards symmetric point, then hit the symmetric point so we can get its uv
+            const symmetricIntersectedPointWorld = symmetricIntersectedPoint;
+            
+            // then clone the intersected point and move it away so we can be sure the raycaster will hit it
+            // this will be the secondary raycaster's origin
+            const raycasterOrigin = symmetricIntersectedPointWorld.clone().multiplyScalar(2);
+            
+            //addMarker(raycasterOrigin, 'red');
+            //addMarker(symmetricIntersectedPointWorld);
+            
+            const raycasterDirection = (new THREE.Vector3()).subVectors(symmetricIntersectedPointWorld, raycasterOrigin).normalize();
+            
+            secondaryRaycaster.set(raycasterOrigin, raycasterDirection);
+            
+            const symmetricIntersects = secondaryRaycaster.intersectObject(currModelTextureMesh);
+            if(symmetricIntersects.length > 0){
+                const intersect = symmetricIntersects[0];
+                const x = intersect.uv.x * canvasWidth
+                const y = intersect.uv.y * canvasHeight;
+                
+                symClickX.push(x);
+                symClickY.push(y);
+                symClickDrag.push(true);
+                symClickColor.push(color);
+                symClickSize.push(size);
+            }
+        }
     }
 }
 
 function strokeModelDraw(){
     const ctx = document.getElementById('liveryCanvas').getContext('2d');
-    for(let i = 0; i < clickX.length; i++){        
+    const symmetricalDrawingEnabled = document.getElementById('enableSymmetricalDrawing').checked;
+    
+    for(let i = 0; i < clickX.length; i++){
         ctx.lineJoin = 'round';
         ctx.lineWidth = clickSize[i];
         ctx.strokeStyle = clickColor[i];
@@ -713,6 +778,21 @@ function strokeModelDraw(){
         ctx.lineTo(clickX[i], clickY[i]);
         ctx.closePath();
         ctx.stroke();
+        
+        // handle symmetry if desired
+        if(symmetricalDrawingEnabled){
+            ctx.beginPath();
+            
+            if(symClickDrag[i] && i){
+                ctx.moveTo(symClickX[i-1], symClickY[i-1]);
+            }else{
+                ctx.moveTo(symClickX[i], symClickY[i]+1);
+            }
+            
+            ctx.lineTo(symClickX[i], symClickY[i]);
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
     
     const newTexture = new THREE.CanvasTexture(document.getElementById('liveryCanvas'));
