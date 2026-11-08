@@ -109,6 +109,7 @@ function processGltf(name){
                 currMeshes[child.name].mesh = obj;
                 currModel = obj;
                 currModelTextureMesh = obj;
+                updateCurrObjEditedLabel(obj.name);
                 
                 // reminder that rotation/position/scale fields are immutable: https://github.com/mrdoob/three.js/issues/8940
                 if(child.parent && currMeshes[child.parent.name]){
@@ -215,6 +216,10 @@ function update(){
 function clearLiveryCanvas(){
     const canvas = document.getElementById('liveryCanvas');
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function updateCurrObjEditedLabel(objName){
+    document.getElementById('currObjToEdit').textContent = `now editing: ${objName}`;
 }
 
 // model selection
@@ -622,6 +627,8 @@ function selectMesh(evt){
             }else{
                 clearLiveryCanvas();
             }
+            
+            updateCurrObjEditedLabel(hit.name);
             
             // indicate which mesh got selected by flashing wireframe
             currModelTextureMesh.material.wireframe = true;
